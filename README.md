@@ -1,6 +1,6 @@
 # Valheim World Sync
 
-**Valheim World Sync** is a python script for syncing Valheim world files between a local directory and a Google drive folder.
+Sync [Valheim](https://store.steampowered.com/app/892970/Valheim/) world files between a local directory and a Google drive folder.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -44,7 +44,7 @@ DRIVE_FOLDER=<Google drive folder ID>
 LOCAL_FOLDER=<Path to local Valheim worlds directory>
 ```
 
-`DRIVE_FOLDER` contains the ID of the Google drive folder to sync world files with. The ID of a google drive folder is the last part of the URL when you navigate that folder on Google drive (for example, the folder at https://drive.google.com/drive/u/1/folders/1mhHDGlTdVwQCgmq8_Okcri5_EDFxcvAG has ID `1mhHDGlTdVwQCgmq8_Okcri5_EDFxcvAG`).
+`DRIVE_FOLDER` contains the ID of the Google drive folder to sync world files with. The ID of a google drive folder is the last part of the URL when you navigate to that folder on Google drive (for example, the folder at https://drive.google.com/drive/u/1/folders/1mhHDGlTdVwQCgmq8_Okcri5_EDFxcvAG has ID `1mhHDGlTdVwQCgmq8_Okcri5_EDFxcvAG`).
 
 `LOCAL_FOLDER` contains the path to the local Valheim worlds folder. This is usually `C:\Users\<Username>\AppData\LocalLow\IronGate\Valheim\` on Windows
 
@@ -58,7 +58,7 @@ python3 sync.py
 
 ## Usage
 
-- VWS searches both the local and drive folders for Valheim world files, and lists all the worlds found with their sync status. The sync status (in sync/upload to drive/download from drive) is based on the last modified times of the files.
+- **VWS** searches both the local and drive folders for Valheim world files, and lists all the worlds found with their sync status. The sync status (already in sync/upload to drive/download from drive) is based on the last modified timestamps of the files.
 
 ![A wild screenshot appeared!](https://user-images.githubusercontent.com/29832401/130596352-6637ef69-b103-4a0b-88e6-ffd6ae2a47db.png)
 
