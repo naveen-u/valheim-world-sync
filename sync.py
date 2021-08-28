@@ -91,7 +91,7 @@ API_VERSION = "v3"
 SCOPES = ["https://www.googleapis.com/auth/drive"]
 VALHEIM_FILE_EXTS = [".db", ".fwl", ".old"]
 DRIVE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
-DISPLAY_TIME_FORMAT = "%Y-%m-%d %H:%M:%S UTC"
+DISPLAY_TIME_FORMAT = "%B %d, %Y at %I:%M:%S %p"
 PANEL_STYLE_FOR_ACTION = {
     WorldAction.SYNCED: "bold green1",
     WorldAction.DOWNLOAD: "bold bright_red",
@@ -179,13 +179,13 @@ def show_sync_menu(
         line1 = Padding(
             "Not on drive"
             if drive_world_time is None
-            else f"Last updated on drive by {drive_world_user} at {drive_world_time}",
+            else f"Last updated on drive by {drive_world_user} on {get_local_time_string_from_utc(drive_world_time)}",
             (0, 6),
         )
         line2 = Padding(
             "Not on system"
             if local_world_time is None
-            else f"Last updated on system at {local_world_time}",
+            else f"Last updated on system on {get_local_time_string_from_utc(local_world_time)}",
             (0, 6),
         )
         panels.append(Panel(Group(header, line1, line2), border_style="bright_black"))
@@ -470,6 +470,24 @@ def print_padded(string: str):
         string (str): Text to print.
     """
     print(Padding(string, (0, 2)))
+
+
+def get_local_time_string_from_utc(time: datetime) -> str:
+    """
+    Get date and time string in the local timezone from a UTC datetime object.
+    String is formatted to DISPLAY_TIME_FORMAT.
+
+    Args:
+        time (datetime): UTC datetime object.
+
+    Returns:
+        str: Date-time string.
+    """
+    return (
+        time.replace(tzinfo=timezone.utc)
+        .astimezone(tz=None)
+        .strftime(DISPLAY_TIME_FORMAT)
+    )
 
 
 # ---------------------------------------------------------------------------- #
