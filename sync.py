@@ -119,10 +119,12 @@ def main():
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            try:
+                creds.refresh(Request())
+            except:
+                creds = get_new_refresh_token()
         else:
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-            creds = flow.run_local_server(port=0)
+            creds = get_new_refresh_token()
         # Save the credentials for the next run
         with open("token.json", "w") as token:
             token.write(creds.to_json())
@@ -143,6 +145,17 @@ def main():
         local_worlds.get(world_to_be_synced, {}),
         drive_worlds.get(world_to_be_synced, {}),
     )
+
+
+def get_new_refresh_token() -> Credentials:
+    """
+    Get a fresh OAuth token.
+
+    Returns:
+        Credentials: Auth credentials
+    """
+    flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
+    return flow.run_local_server(port=0)
 
 
 def show_sync_menu(
