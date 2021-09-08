@@ -12,6 +12,7 @@ import glob
 import io
 import os
 import os.path
+import sys
 from datetime import datetime, timezone
 from enum import Enum
 from os import listdir
@@ -104,10 +105,13 @@ PANEL_STYLE_FOR_ACTION = {
 # ---------------------------------------------------------------------------- #
 
 
-def main():
+def sync(world_name: str = None):
     """
     Searches for Valheim world files in the provided local and drive directories,
     and lets the user sync them.
+
+    Args:
+        world_name (str, optional): Name of world to be synced. Defaults to None.
     """
     global DRIVE_FOLDER, LOCAL_FOLDER
     creds = None
@@ -137,7 +141,9 @@ def main():
         LOCAL_FOLDER = Prompt.ask("  Enter local folder path")
     drive_worlds = get_worlds_in_drive(service, DRIVE_FOLDER)
     local_worlds = get_worlds_in_folder(LOCAL_FOLDER)
-    world_to_be_synced, sync_action = show_sync_menu(local_worlds, drive_worlds)
+    world_to_be_synced, sync_action = show_sync_menu(
+        local_worlds, drive_worlds, world_name
+    )
     sync_world(
         service,
         sync_action,
@@ -159,7 +165,9 @@ def get_new_refresh_token() -> Credentials:
 
 
 def show_sync_menu(
-    local_worlds: Dict[str, LocalWorldData], drive_worlds: Dict[str, DriveWorldData]
+    local_worlds: Dict[str, LocalWorldData],
+    drive_worlds: Dict[str, DriveWorldData],
+    world_name: str,
 ) -> Tuple[str, WorldAction]:
     """
     Shows sync menu with sync action for each available world and get user input.
@@ -205,18 +213,25 @@ def show_sync_menu(
         i += 1
     print()
     print(Panel(Group(*panels), title="Valheim Worlds"))
-    world_index = (
-        IntPrompt.ask(
-            f"  Enter world to sync, or 0 to quit",
-            choices=[str(x) for x in range(0, i)],
-            default=0,
+    if world_name not in world_action_map:
+        print_padded(f"World {world_name} was not found among the available files!")
+        print()
+        world_name = None
+    if world_name is None:
+        world_index = (
+            IntPrompt.ask(
+                f"  Enter world to sync, or 0 to quit",
+                choices=[str(x) for x in range(0, i)],
+                default=0,
+            )
+            - 1
         )
-        - 1
-    )
-    if world_index < 0 or world_index > i - 1:
-        print_padded("Buh-bye!")
-        exit(0)
-    world_to_be_synced = worlds_list[world_index]
+        if world_index < 0 or world_index > i - 1:
+            print_padded("Buh-bye!")
+            exit(0)
+        world_to_be_synced = worlds_list[world_index]
+    else:
+        world_to_be_synced = world_name
     return world_to_be_synced, world_action_map[world_to_be_synced]
 
 
@@ -508,4 +523,7 @@ def get_local_time_string_from_utc(time: datetime) -> str:
 # ---------------------------------------------------------------------------- #
 
 if __name__ == "__main__":
-    main()
+    world = None
+    if len(sys.argv) > 1:
+        world = sys.argv[1]
+    sync(world)
