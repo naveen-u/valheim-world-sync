@@ -213,7 +213,7 @@ def show_sync_menu(
         i += 1
     print()
     print(Panel(Group(*panels), title="Valheim Worlds"))
-    if world_name not in world_action_map:
+    if world_name not in world_action_map and world_name is not None:
         print_padded(f"World {world_name} was not found among the available files!")
         print()
         world_name = None
